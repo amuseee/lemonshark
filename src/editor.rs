@@ -7,29 +7,33 @@ pub struct Editor {}
 
 impl Editor {
     pub fn run(&self) {
-       let _out = stdout().into_raw_mode().unwrap();
+        let _out = stdout().into_raw_mode().unwrap();
 
-        for key in stdin().keys() {
-            match key {
-                Ok(key) => match key {
-                    Key::Char(c) => {
-                    if c.is_control() {
-                         println!("{:?}\r", c as u8);
-                    } else {
-                        println!("{:?} ({})\r", c as u8, c);
-                    }
-                }
-                Key::Ctrl('q') => break,
-                _ => println!("{:?}\r", key),
-            },
-            Err(err) => diew(err),
+        loop {
+            if let Err(error) = self.process_keypress() {
+                diew(error);
             }
-        } 
+        }
     }
 
     pub fn default() -> Self {
         Self{}
-    } 
+    }
+
+    fn read_key() -> Result<Key, Error> {
+        loop {
+            if let Some(key) = stdin().lock().keys().next() {
+                return key;
+            }
+        }
+    }
+    fn process_keypress(&self) -> Result<(), Error> {
+        let keypress = Self::read_key()?;
+        if let Key::Ctrl('q') = keypress {
+            panic!("exitting lemonshark...");
+        }
+        Ok(())
+    }
 }
 
 fn diew(e: Error) {
