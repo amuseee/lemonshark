@@ -1,13 +1,18 @@
-use std::io::{self, stdin, stdout, Read};
+use std::io::{self, stdin, stdout, Read, Error};
 use termion::raw::IntoRawMode;
+
+
+// TODO refactor termion w/ crossterm to add windows support (ugh)
+
+fn errorprint(e: Error) {
+    panic!("{}", e);
+}
 
 
 fn check_ctrl(c: char) -> u8 {
     let byte = c as u8;
     byte & 0b00011111 // bitwise magic!!
 }
-
-
 
 fn main() {
 
