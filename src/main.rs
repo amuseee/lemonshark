@@ -2,9 +2,9 @@ use std::io::{self, stdin, stdout, Read};
 use termion::raw::IntoRawMode;
 
 
-fn to_ctrl_byte(c: char) -> u8 {
+fn check_ctrl(c: char) -> u8 {
     let byte = c as u8;
-    byte & 0b0001_1111
+    byte & 0b00011111 // bitwise magic!!
 }
 
 
@@ -21,7 +21,7 @@ fn main() {
         } else {
             println!("{:?} ({})\r", i, c);
         }
-        if i == to_ctrl_byte('q') {
+        if i == check_ctrl('q') {
             break;
         }
     }
