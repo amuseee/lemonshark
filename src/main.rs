@@ -8,12 +8,16 @@ fn main() {
     for i in stdin().bytes() { 
         let i = i.unwrap();
         let c = i as char;
+        print!("{}", c);
+        /*
         if c.is_control() {
             println!("{} \r", i);
         } else {
             println!("{} ({})\r", i, c);
         }
+        */
         if c == 'q' {
+            println!("\r");
             break;
         }
     }
