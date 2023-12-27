@@ -26,6 +26,10 @@ impl Editor {
             }
         } 
     }
+
+    pub fn default() -> Self {
+        Self{}
+    } 
 }
 
 fn diew(e: Error) {
