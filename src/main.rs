@@ -1,8 +1,5 @@
 use std::io::{self, stdin, stdout, Read, Error};
-use termion::raw::IntoRawMode;
-
-
-// TODO refactor termion w/ crossterm to add windows support (ugh)
+use crossterm::terminal;
 
 fn errorprint(e: Error) {
     panic!("{}", e);
@@ -16,10 +13,9 @@ fn ctrl_and(c: char) -> u8 {
 
 fn main() {
 
-    let _stdout = stdout().into_raw_mode().unwrap();
+    let _stdout = terminal::enable_raw_mode();
 
     for i in stdin().bytes() { 
-
         match i {
             Ok(i) => {
                 let c = i as char;
@@ -30,6 +26,7 @@ fn main() {
                 }
 
                 if i == ctrl_and('q') {
+                    let _stdout = terminal::disable_raw_mode();
                     break;
                  }
             }
