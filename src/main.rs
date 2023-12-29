@@ -2,6 +2,6 @@ mod editor;
 use editor::Editor;
 
 fn main() {
-   let lemonshark = Editor::default();
+   let mut lemonshark = Editor::default();
    lemonshark.run();
 }
