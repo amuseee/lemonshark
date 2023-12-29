@@ -50,4 +50,13 @@ impl Terminal {
             }
         }
     }
+    pub fn hide_cursor() {
+        print!("{}", cursor::Hide);
+    }
+    pub fn show_cursor() {
+        print!("{}", cursor::Show);
+    }
+    pub fn clear_line() {
+        print!("{}", clear::CurrentLine);
+    }
 }
