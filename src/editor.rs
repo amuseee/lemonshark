@@ -1,18 +1,15 @@
-use std::io::{stdin, stdout, Error, Write};
+use crate::Terminal;
+use std::io::Error;
 // i WILL! reimplement this with cross platform support!!
 use termion::event::Key;
-use termion::input::TermRead;
-use termion::raw::IntoRawMode;
-use termion::clear;
-use termion::cursor;
 
 pub struct Editor {
     go_quit: bool,
+    terminal: Terminal,
 }
 
 impl Editor {
     pub fn run(&mut self) {
-        let _out = stdout().into_raw_mode().unwrap();
         loop {
             if let Err(error) = self.scr_refresh() {
                 diew(error);
@@ -26,24 +23,29 @@ impl Editor {
         }
     }
     pub fn default() -> Self {
-        Self{go_quit: false}
+        Self {
+            go_quit: false, 
+            terminal: Terminal::default().expect("failed to init terminal"),
+        }
     }
     fn scr_refresh(&self) -> Result<(), Error> {
-        print!("{}{}", clear::All, cursor::Goto(1, 1));
+        Terminal::scr_clear();
+        Terminal::cursorpos(0, 0);
         if self.go_quit {
             println!("shork hopes you'll be back c:\r");
+        } else {
+            self.draw_rows();
+            Terminal::cursorpos(0, 0);
         }
-        stdout().flush()
-    } 
-    fn read_key() -> Result<Key, Error> {
-        loop {
-            if let Some(key) = stdin().lock().keys().next() {
-                return key;
-            }
-        }
+        Terminal::flush()
     }
+    fn draw_rows (&self) {
+        for _ in 0..24 {
+            println!("~\r");
+        }
+    } 
     fn process_keypress(&mut self) -> Result<(), Error> {
-        let keypress = Self::read_key()?;
+        let keypress = Terminal::read_key()?;
         if let Key::Ctrl('q') = keypress {
             self.go_quit = true;
         }
@@ -52,6 +54,6 @@ impl Editor {
 }
 
 fn diew(e: Error) {
-    print!("{}", clear::All);
+    Terminal::scr_clear();
     panic!("{}", e);
 }
