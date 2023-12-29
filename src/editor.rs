@@ -13,11 +13,11 @@ impl Editor {
             if let Err(error) = self.scr_refresh() {
                 diew(error);
             }
-            if let Err(error) = self.process_keypress() {
-                diew(error);
-            }
             if self.go_quit {
                 break;
+            }
+            if let Err(error) = self.process_keypress() {
+                diew(error);
             }
         }
     }
