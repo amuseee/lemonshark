@@ -4,6 +4,7 @@ use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 use termion::clear;
+use termion::cursor;
 
 pub struct Editor {
     go_quit: bool,
@@ -28,7 +29,10 @@ impl Editor {
         Self{go_quit: false}
     }
     fn scr_refresh(&self) -> Result<(), Error> {
-        print!("{}", clear::All);
+        print!("{}{}", clear::All, cursor::Goto(1, 1));
+        if self.go_quit {
+            println!("shork hopes you'll be back c:\r");
+        }
         stdout().flush()
     } 
     fn read_key() -> Result<Key, Error> {
@@ -48,5 +52,6 @@ impl Editor {
 }
 
 fn diew(e: Error) {
+    print!("{}", clear::All);
     panic!("{}", e);
 }
