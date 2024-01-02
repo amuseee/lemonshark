@@ -2,9 +2,15 @@ use crate::Terminal;
 use std::io::Error;
 use termion::event::Key;
 
+pub struct pos {
+    pub x: usize,
+    pub y: usize,
+}
+
 pub struct Editor {
     go_quit: bool,
     terminal: Terminal,
+    cursor_pos: pos,
 }
 
 impl Editor {
@@ -25,37 +31,45 @@ impl Editor {
         Self {
             go_quit: false, 
             terminal: Terminal::default().expect("failed to init terminal"),
+            cursor_pos: pos{x: 0, y: 0},
         }
     }
     fn scr_refresh(&self) -> Result<(), Error> {
         Terminal::hide_cursor();
-        Terminal::cursorpos(0, 0);
+        Terminal::cursorpos(&pos{x: 0, y: 0});
         if self.go_quit {
             Terminal::scr_clear();
             println!("shork hopes you'll be back c:\r");
         } else {
             self.draw_rows();
-            Terminal::cursorpos(0, 0);
+            Terminal::cursorpos(&self.cursor_pos);
         }
         Terminal::show_cursor();
         Terminal::flush()
     }
     fn welcome(&self) {
+        /* TODO implement ascii art on welcome screen
+        let shark = r#" 
+             .';
+         .-'` .'
+       ,`.-'-.`\
+      ; /     '-'
+      | \       ,-,
+      \  '-.__   )_`'._
+       '.     ```      ``'--._
+      .-' ,                   `'-.
+       '-'`-._           ((   o   )
+             `'--....(`- ,__..--'
+                       '-'`
+        "#; */
         let mut message = format!("lemonshark text editor");
-        let mut message2 = format!("shork loves chomping on text ><>");
         let width = self.terminal.size().width as usize;
         let len = message.len();
-        let len2 = message2.len();
         let padding = width.saturating_sub(len) / 2;
-        let padding2 = width.saturating_sub(len2) / 2;
         let spaces = " ".repeat(padding.saturating_sub(1));
-        let spaces2 = " ".repeat(padding2.saturating_sub(1));
         message = format!("~{}{}", spaces, message);
-        message2 = format!("~{}{}", spaces2, message2);
         message.truncate(width);
-        message2.truncate(width);
         println!("{}\r", message);
-        println!("{}\r", message2);
     }
     fn draw_rows (&self) {
         let height = self.terminal.size().height;
